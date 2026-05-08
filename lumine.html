@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lumine | Partner System</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="lumine-style.css"/>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-inner">
+    <h1>LUMINE</h1>
+    <p>PARTNER MANAGEMENT SYSTEM</p>
+    <div class="splash-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>LUMINE</h1>
+      <p>PARTNER MANAGEMENT SYSTEM</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('signin')">SIGN IN</div>
+      <div class="auth-tab" onclick="switchTab('signup')">CREATE ACCOUNT</div>
+    </div>
+
+    <!-- SIGN IN PANEL -->
+    <div id="panel-signin" class="auth-panel active">
+      <div class="af">
+        <label>EMAIL ADDRESS</label>
+        <input type="email" id="si-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter') signIn()"/>
+      </div>
+      <div class="af">
+        <label>PASSWORD</label>
+        <input type="password" id="si-pass" placeholder="Your password" onkeydown="if(event.key==='Enter') signIn()"/>
+      </div>
+      <div id="si-err" class="auth-msg"></div>
+      <button class="btn-auth" id="btn-signin" onclick="signIn()">SIGN IN</button>
+      <div class="auth-switch">New to Lumine? <span onclick="switchTab('signup')">Create an account</span></div>
+    </div>
+
+    <!-- SIGN UP PANEL -->
+    <div id="panel-signup" class="auth-panel">
+      <div class="af-row">
+        <div class="af"><label>FIRST NAME *</label><input type="text" id="su-fname" placeholder="First name"/></div>
+        <div class="af"><label>LAST NAME *</label><input type="text" id="su-lname" placeholder="Last name"/></div>
+      </div>
+      <div class="af"><label>EMAIL ADDRESS *</label><input type="email" id="su-email" placeholder="you@example.com"/></div>
+      <div class="af"><label>PHONE NUMBER</label><input type="tel" id="su-phone" placeholder="+27 00 000 0000"/></div>
+      <div class="af"><label>CITY / REGION</label><input type="text" id="su-city" placeholder="Cape Town"/></div>
+      <div class="af">
+        <label>ACCOUNT TYPE</label>
+        <select id="su-role">
+          <option value="partner">Partner / Distributor</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+      <div class="af"><label>PASSWORD * (min 6 characters)</label><input type="password" id="su-pass" placeholder="Create a strong password"/></div>
+      <div class="af"><label>CONFIRM PASSWORD *</label><input type="password" id="su-pass2" placeholder="Repeat your password" onkeydown="if(event.key==='Enter') signUp()"/></div>
+      <div id="su-err" class="auth-msg"></div>
+      <button class="btn-auth" id="btn-signup" onclick="signUp()">CREATE ACCOUNT</button>
+      <div class="auth-switch">Already registered? <span onclick="switchTab('signin')">Sign in</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
+      <div class="tlogo">LUM<em>I</em>NE</div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-wrap">
+        <button class="notif-btn" id="notif-toggle" onclick="toggleNotifPanel()">&#128276;
+          <span class="nbadge" id="notif-count">0</span>
+        </button>
+      </div>
+      <div class="user-chip">
+        <div class="uinfo">
+          <div class="uname" id="top-name"></div>
+          <div class="urole" id="top-role"></div>
+        </div>
+        <div class="uav" id="top-av">U</div>
+      </div>
+      <button class="btn-out" onclick="logout()">SIGN OUT</button>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-user">
+        <p>SIGNED IN AS</p>
+        <strong id="sb-name">—</strong>
+      </div>
+      <div class="nav-group">
+        <div class="nav-lbl">OVERVIEW</div>
+        <div class="nitem active" id="nav-dashboard" onclick="gotoPage('dashboard')">
+          <span class="ic">&#9672;</span> Dashboard
+        </div>
+      </div>
+      <div id="admin-nav" style="display:none">
+        <div class="nav-lbl">MANAGEMENT</div>
+        <div class="nitem" id="nav-partners" onclick="gotoPage('partners')">
+          <span class="ic">&#9675;</span> Partners
+          <span class="npill" id="pending-pill">0</span>
+        </div>
+        <div class="nitem" id="nav-orders" onclick="gotoPage('orders')">
+          <span class="ic">&#9643;</span> All Orders
+        </div>
+        <div class="nitem" id="nav-inventory" onclick="gotoPage('inventory')">
+          <span class="ic">&#9647;</span> Inventory
+        </div>
+        <div class="nitem" id="nav-reports" onclick="gotoPage('reports')">
+          <span class="ic">&#9635;</span> Reports
+        </div>
+      </div>
+      <div id="partner-nav" style="display:none">
+        <div class="nav-lbl">MY BUSINESS</div>
+        <div class="nitem" id="nav-my-orders" onclick="gotoPage('my-orders')">
+          <span class="ic">&#9643;</span> My Orders
+        </div>
+        <div class="nitem" id="nav-place-order" onclick="gotoPage('place-order')">
+          <span class="ic">&#10022;</span> Place Order
+        </div>
+        <div class="nitem" id="nav-calculator" onclick="gotoPage('calculator')">
+          <span class="ic">&#9676;</span> Profit Calculator
+        </div>
+      </div>
+      <div>
+        <div class="nav-lbl">ACCOUNT</div>
+        <div class="nitem" id="nav-profile" onclick="gotoPage('profile')">
+          <span class="ic">&#9675;</span> My Profile
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main" id="main-wrap" onclick="closeSidebarMobile()">
+
+      <!-- ====== DASHBOARD ====== -->
+      <div id="page-dashboard" class="page active">
+        <div class="ph">
+          <div class="ptitle" id="dash-greeting">Dashboard</div>
+          <div class="psub" id="dash-date"></div>
+        </div>
+        <div class="stats-grid" id="dash-stats"></div>
+        <div class="tw">
+          <div class="tw-head">
+            <span class="tw-title">RECENT ORDERS</span>
+            <button class="btn btn-outline btn-sm" id="btn-view-all-orders">VIEW ALL</button>
+          </div>
+          <div class="tscroll">
+            <table>
+              <thead><tr id="dash-order-thead"></tr></thead>
+              <tbody id="dash-order-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="admin-recent-partners-wrap" style="display:none">
+          <div class="tw">
+            <div class="tw-head">
+              <span class="tw-title">RECENT PARTNER REGISTRATIONS</span>
+              <button class="btn btn-outline btn-sm" onclick="gotoPage('partners')">MANAGE</button>
+            </div>
+            <div class="tscroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>NAME</th><th>EMAIL</th><th>CITY</th><th>STATUS</th><th>JOINED</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-partners-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== PARTNERS (admin) ====== -->
+      <div id="page-partners" class="page">
+        <div class="ph ph-row">
+          <div>
+            <div class="ptitle">Partners</div>
+            <div class="psub">Manage your distributor network</div>
+          </div>
+          <button class="btn btn-gold" onclick="openPartnerModal()">+ ADD PARTNER</button>
+        </div>
+        <div class="tw">
+          <div class="tw-head">
+            <span class="tw-title">ALL PARTNERS</span>
+            <div class="tw-actions">
+              <input class="sbox" id="partner-search" placeholder="Search by name or email..." oninput="renderPartnersTable()"/>
+            </div>
+          </div>
+          <div class="tscroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>NAME</th><th>EMAIL</th><th>PHONE</th><th>CITY</th>
+                  <th>ORDERS</th><th>JOINED</th><th>STATUS</th><th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="partners-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== ALL ORDERS (admin) ====== -->
+      <div id="page-orders" class="page">
+        <div class="ph ph-row">
+          <div>
+            <div class="ptitle">All Orders</div>
+            <div class="psub">Real-time order tracking</div>
+          </div>
+          <button class="btn btn-gold" onclick="openAdminOrderModal()">+ CREATE ORDER</button>
+        </div>
+        <div class="tw">
+          <div class="tw-head">
+            <span class="tw-title">ORDER MANAGEMENT</span>
+            <div class="tw-actions">
+              <select class="sbox" id="order-status-filter" onchange="renderOrdersTable()">
+                <option value="">All Statuses</option>
+                <option>Processing</option>
+                <option>Shipped</option>
+                <option>Delivered</option>
+                <option>Cancelled</option>
+              </select>
+            </div>
+          </div>
+          <div class="tscroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>ORDER #</th><th>PARTNER</th><th>PACK</th><th>QTY</th>
+                  <th>AMOUNT</th><th>STATUS</th><th>DATE</th><th>UPDATE</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== INVENTORY (admin) ====== -->
+      <div id="page-inventory" class="page">
+        <div class="ph ph-row">
+          <div>
+            <div class="ptitle">Inventory</div>
+            <div class="psub">Live stock management</div>
+          </div>
+          <button class="btn btn-gold" onclick="openModal('modal-restock')">+ RESTOCK</button>
+        </div>
+        <div class="inv-grid" id="inv-grid"></div>
+      </div>
+
+      <!-- ====== REPORTS (admin) ====== -->
+      <div id="page-reports" class="page">
+        <div class="ph">
+          <div class="ptitle">Reports</div>
+          <div class="psub">Business analytics &amp; insights</div>
+        </div>
+        <div class="stats-grid" id="report-stats"></div>
+        <div class="chart-box">
+          <div class="chart-lbl">MONTHLY ORDER VOLUME (LAST 6 MONTHS)</div>
+          <div class="bar-row" id="bar-chart"></div>
+        </div>
+        <div class="tw">
+          <div class="tw-head"><span class="tw-title">TOP PARTNERS BY ORDERS</span></div>
+          <div class="tscroll">
+            <table>
+              <thead>
+                <tr><th>RANK</th><th>PARTNER</th><th>CITY</th><th>ORDERS</th><th>EST. REVENUE</th></tr>
+              </thead>
+              <tbody id="top-partners-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tw">
+          <div class="tw-head"><span class="tw-title">PACK PRICING REFERENCE</span></div>
+          <div class="tscroll">
+            <table>
+              <thead>
+                <tr><th>PACK</th><th>WHOLESALE</th><th>RETAIL RANGE</th><th>YOUR COMMISSION</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Discovery Pack 1 (5 x 30ml)</td><td><strong>R375</strong></td><td>R750 - R900</td><td>R375 - R525</td></tr>
+                <tr><td>Discovery Pack 2 (5 x 50ml)</td><td><strong>R550</strong></td><td>R900 - R1,100</td><td>R350 - R550</td></tr>
+                <tr><td>Car Diffuser Pack (10 x 8ml)</td><td><strong>R300</strong></td><td>R300</td><td>R0 (at cost)</td></tr>
+                <tr><td>Interior Fragrance Pack (4 x 150ml)</td><td><strong>R640</strong></td><td>R920 - R1,200</td><td>R280 - R560</td></tr>
+                <tr><td>Sample Pack</td><td><strong>R100</strong></td><td>N/A</td><td>Non-commissionable</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== MY ORDERS (partner) ====== -->
+      <div id="page-my-orders" class="page">
+        <div class="ph ph-row">
+          <div>
+            <div class="ptitle">My Orders</div>
+            <div class="psub">Your live order history</div>
+          </div>
+          <button class="btn btn-gold" onclick="gotoPage('place-order')">+ PLACE ORDER</button>
+        </div>
+        <div class="stats-grid" id="my-order-stats"></div>
+        <div class="tw">
+          <div class="tw-head"><span class="tw-title">ORDER HISTORY</span></div>
+          <div class="tscroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>ORDER #</th><th>PACK</th><th>QTY</th><th>AMOUNT</th>
+                  <th>DELIVERY ADDRESS</th><th>STATUS</th><th>DATE</th>
+                </tr>
+              </thead>
+              <tbody id="my-orders-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== PLACE ORDER (partner) ====== -->
+      <div id="page-place-order" class="page">
+        <div class="ph">
+          <div class="ptitle">Place an Order</div>
+          <div class="psub">Select a Lumine partner pack</div>
+        </div>
+        <div class="packs-banner">
+          <h2>Lumine Partner Packs</h2>
+          <p>Wholesale pricing — luxury fragrance built through people.</p>
+        </div>
+        <div class="pack-grid" id="pack-grid"></div>
+        <div id="order-form-wrap" style="display:none">
+          <div class="fcard">
+            <div class="fcard-title">Order Details</div>
+            <div class="fg2">
+              <div class="ff"><label>SELECTED PACK</label><input type="text" id="of-pack" readonly/></div>
+              <div class="ff"><label>UNIT PRICE</label><input type="text" id="of-price" readonly/></div>
+              <div class="ff"><label>QUANTITY</label><input type="number" id="of-qty" min="1" value="1" oninput="calcOrderTotal()"/></div>
+              <div class="ff"><label>TOTAL AMOUNT</label><input type="text" id="of-total" readonly/></div>
+              <div class="ff span2"><label>DELIVERY ADDRESS *</label><input type="text" id="of-address" placeholder="Street, City, Province, Postal Code"/></div>
+              <div class="ff span2"><label>NOTES (OPTIONAL)</label><textarea id="of-notes" rows="3" placeholder="Special instructions..."></textarea></div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-gold" id="btn-place-order" onclick="placeOrder()">SUBMIT ORDER</button>
+              <button class="btn btn-outline" onclick="cancelOrderForm()">CANCEL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== PROFIT CALCULATOR (partner) ====== -->
+      <div id="page-calculator" class="page">
+        <div class="ph">
+          <div class="ptitle">Profit Calculator</div>
+          <div class="psub">Estimate your earnings before you order</div>
+        </div>
+        <div class="fcard">
+          <div class="fcard-title">Calculate Your Profit</div>
+          <div class="fg2">
+            <div class="ff">
+              <label>SELECT PACK</label>
+              <select id="calc-pack" onchange="calcProfit()">
+                <option value="375">Discovery Pack 1 (5 x 30ml) — R375</option>
+                <option value="550">Discovery Pack 2 (5 x 50ml) — R550</option>
+                <option value="300">Car Diffuser Pack (10 x 8ml) — R300</option>
+                <option value="640">Interior Fragrance Pack — R640</option>
+              </select>
+            </div>
+            <div class="ff"><label>PACKS TO BUY</label><input type="number" id="calc-qty" value="1" min="1" oninput="calcProfit()"/></div>
+            <div class="ff"><label>YOUR SELLING PRICE PER PACK (R)</label><input type="number" id="calc-sell" value="900" min="0" oninput="calcProfit()"/></div>
+            <div class="ff"><label>PACKS YOU EXPECT TO SELL</label><input type="number" id="calc-sell-qty" value="1" min="0" oninput="calcProfit()"/></div>
+          </div>
+          <div class="calc-result">
+            <div class="stats-grid" id="calc-stats"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== PROFILE ====== -->
+      <div id="page-profile" class="page">
+        <div class="ph">
+          <div class="ptitle">My Profile</div>
+          <div class="psub">Manage your account information</div>
+        </div>
+        <div class="fcard">
+          <div class="fcard-title">Personal Information</div>
+          <div class="fg2">
+            <div class="ff"><label>FIRST NAME</label><input type="text" id="pr-fname"/></div>
+            <div class="ff"><label>LAST NAME</label><input type="text" id="pr-lname"/></div>
+            <div class="ff"><label>EMAIL ADDRESS</label><input type="email" id="pr-email" readonly/></div>
+            <div class="ff"><label>PHONE NUMBER</label><input type="tel" id="pr-phone"/></div>
+            <div class="ff"><label>CITY / REGION</label><input type="text" id="pr-city"/></div>
+            <div class="ff"><label>DEFAULT DELIVERY ADDRESS</label><input type="text" id="pr-addr"/></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" id="btn-save-profile" onclick="saveProfile()">SAVE CHANGES</button>
+          </div>
+        </div>
+        <div class="fcard">
+          <div class="fcard-title">Change Password</div>
+          <div class="fg2">
+            <div class="ff"><label>CURRENT PASSWORD</label><input type="password" id="pr-oldpass" placeholder="Current password"/></div>
+            <div class="ff"><label>NEW PASSWORD</label><input type="password" id="pr-newpass" placeholder="New password (min 6 chars)"/></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" onclick="changePassword()">UPDATE PASSWORD</button>
+          </div>
+        </div>
+        <div class="fcard" id="profile-stats-card" style="display:none">
+          <div class="fcard-title">My Stats</div>
+          <div class="stats-grid" id="profile-stats"></div>
+        </div>
+      </div>
+
+      <!-- ====== PENDING ====== -->
+      <div id="page-pending" class="page">
+        <div class="pending-wrap">
+          <div class="pending-icon">&#9203;</div>
+          <h2>Application Under Review</h2>
+          <p>Thank you for registering as a Lumine partner. Your application is being reviewed by our team and you will receive access within 24-48 hours once approved.</p>
+          <br/><br/>
+          <button class="btn btn-outline" onclick="logout()" style="margin-top:8px">SIGN OUT</button>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="np-head">
+    <h3>NOTIFICATIONS</h3>
+    <button class="btn btn-xs btn-outline" onclick="markAllRead()">MARK ALL READ</button>
+  </div>
+  <div id="notif-list"></div>
+</div>
+
+<!-- MODAL: Add / Edit Partner -->
+<div class="modal-overlay" id="modal-partner">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-partner-title">Add Partner</h3>
+      <button class="modal-x" onclick="closeModal('modal-partner')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="mf2">
+        <div class="mf"><label>FIRST NAME *</label><input type="text" id="mp-fname" placeholder="First name"/></div>
+        <div class="mf"><label>LAST NAME *</label><input type="text" id="mp-lname" placeholder="Last name"/></div>
+      </div>
+      <div class="mf"><label>EMAIL *</label><input type="email" id="mp-email" placeholder="email@example.com"/></div>
+      <div class="mf"><label>PHONE</label><input type="tel" id="mp-phone" placeholder="+27 00 000 0000"/></div>
+      <div class="mf"><label>CITY</label><input type="text" id="mp-city" placeholder="City"/></div>
+      <div class="mf">
+        <label>STATUS</label>
+        <select id="mp-status">
+          <option value="active">Active</option>
+          <option value="pending">Pending</option>
+          <option value="suspended">Suspended</option>
+        </select>
+      </div>
+      <div class="mf"><label>NOTES</label><textarea id="mp-notes" rows="2" placeholder="Any notes..."></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-partner')">CANCEL</button>
+      <button class="btn btn-gold" onclick="savePartner()">SAVE PARTNER</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Create Order (admin) -->
+<div class="modal-overlay" id="modal-order">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Create Order</h3>
+      <button class="modal-x" onclick="closeModal('modal-order')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="mf">
+        <label>PARTNER</label>
+        <select id="mo-partner"><option value="">Select partner...</option></select>
+      </div>
+      <div class="mf">
+        <label>PACK</label>
+        <select id="mo-pack" onchange="calcModalTotal()">
+          <option value="375">Discovery Pack 1 (5 x 30ml) — R375</option>
+          <option value="550">Discovery Pack 2 (5 x 50ml) — R550</option>
+          <option value="300">Car Diffuser Pack (10 x 8ml) — R300</option>
+          <option value="640">Interior Fragrance Pack (4 x 150ml) — R640</option>
+          <option value="100">Sample Pack — R100</option>
+        </select>
+      </div>
+      <div class="mf2">
+        <div class="mf"><label>QUANTITY</label><input type="number" id="mo-qty" value="1" min="1" oninput="calcModalTotal()"/></div>
+        <div class="mf"><label>TOTAL</label><input type="text" id="mo-total" readonly/></div>
+      </div>
+      <div class="mf">
+        <label>STATUS</label>
+        <select id="mo-status">
+          <option>Processing</option>
+          <option>Shipped</option>
+          <option>Delivered</option>
+        </select>
+      </div>
+      <div class="mf"><label>DELIVERY ADDRESS</label><input type="text" id="mo-address" placeholder="Delivery address"/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-order')">CANCEL</button>
+      <button class="btn btn-gold" onclick="adminCreateOrder()">CREATE ORDER</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Restock -->
+<div class="modal-overlay" id="modal-restock">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Restock Product</h3>
+      <button class="modal-x" onclick="closeModal('modal-restock')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="mf">
+        <label>PRODUCT</label>
+        <select id="rs-product">
+          <option value="0">30ml Perfume</option>
+          <option value="1">50ml Perfume</option>
+          <option value="2">8ml Car Diffuser</option>
+          <option value="3">150ml Interior Fragrance</option>
+          <option value="4">4ml Sample Perfume</option>
+        </select>
+      </div>
+      <div class="mf"><label>ADD QUANTITY</label><input type="number" id="rs-qty" value="50" min="1"/></div>
+      <div class="mf"><label>SUPPLIER NOTE (OPTIONAL)</label><input type="text" id="rs-note" placeholder="Batch reference, supplier name..."/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('modal-restock')">CANCEL</button>
+      <button class="btn btn-gold" onclick="doRestock()">CONFIRM RESTOCK</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="lumine-app.js"></script>
+</body>
+</html>
